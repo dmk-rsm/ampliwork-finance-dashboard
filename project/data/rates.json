@@ -1,0 +1,11 @@
+{
+  "note": "Static exchange rates for this exercise. Treat these as fixed — do not call a live rates API.",
+  "base": "USD",
+  "asOf": "2025-05-31",
+  "rates": {
+    "USD": 1.00,
+    "EUR": 1.08,
+    "GBP": 1.27,
+    "CAD": 0.74
+  }
+}

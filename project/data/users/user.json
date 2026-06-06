@@ -1,0 +1,59 @@
+{
+  "company": "Circuit Labs Inc",
+  "authNote": "Mock credentials for the take-home exercise only.",
+  "tabAccessMatrix": {
+    "transactions": ["admin", "finance_lead", "viewer"],
+    "stats": ["admin", "finance_lead", "analyst"],
+    "custom": ["admin", "finance_lead"]
+  },
+  "users": [
+    {
+      "id": "usr_001",
+      "email": "alex.rivera@circuitlabs.io",
+      "password": "CircuitAdmin2025!",
+      "name": "Alex Rivera",
+      "title": "CEO & Co-founder",
+      "role": "admin",
+      "allowedTabs": ["transactions", "stats", "custom"],
+      "department": "Executive",
+      "active": true,
+      "createdAt": "2023-01-15"
+    },
+    {
+      "id": "usr_002",
+      "email": "priya.shah@circuitlabs.io",
+      "password": "CircuitFinance2025!",
+      "name": "Priya Shah",
+      "title": "Head of Finance",
+      "role": "finance_lead",
+      "allowedTabs": ["transactions", "stats", "custom"],
+      "department": "Finance",
+      "active": true,
+      "createdAt": "2023-04-02"
+    },
+    {
+      "id": "usr_003",
+      "email": "marcus.chen@circuitlabs.io",
+      "password": "CircuitAnalyst2025!",
+      "name": "Marcus Chen",
+      "title": "Finance Analyst",
+      "role": "analyst",
+      "allowedTabs": ["stats"],
+      "department": "Finance",
+      "active": true,
+      "createdAt": "2024-06-10"
+    },
+    {
+      "id": "usr_004",
+      "email": "jordan.lee@circuitlabs.io",
+      "password": "CircuitViewer2025!",
+      "name": "Jordan Lee",
+      "title": "Engineering Manager",
+      "role": "viewer",
+      "allowedTabs": ["transactions"],
+      "department": "Engineering",
+      "active": true,
+      "createdAt": "2024-09-01"
+    }
+  ]
+}
