@@ -2,7 +2,7 @@ import userData from '../../data/users/user.json';
 
 import { User, NormalizedTransaction, ChaseRawTransaction, BoaRawTransaction, AmexRawTransaction } from '../types';
 
-const users: User[] = userData.users;
+const users = userData.users as User[];
 
 /**
  * Helper to look up user from user.json by matching their name.
