@@ -36,6 +36,21 @@ You can sign in with any of the mock accounts defined in `data/users/user.json` 
 
 ---
 
+## 🧪 Testing the API Endpoints
+
+Because all API routes are protected by backend Bearer Token authentication, you cannot simply `GET` the endpoints anonymously via Postman or your browser.
+
+To test an API endpoint (e.g., `GET /api/transactions`):
+1. Pick any valid user ID from the `user.json` file (for example: `usr_001`).
+2. Add an `Authorization` header to your request with the value `Bearer <user_id>`.
+
+**Example using cURL:**
+```bash
+curl -H "Authorization: Bearer usr_001" http://localhost:3000/api/transactions
+```
+
+---
+
 ## 🏗️ Architecture & Implementation
 
 ### 1. Data Normalization
