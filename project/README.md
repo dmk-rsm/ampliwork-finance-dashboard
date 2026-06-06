@@ -1,13 +1,15 @@
-# Circuit Labs — Finance Dashboard
+# Circuit Labs — Finance Dashboard Case Study
 
-This is a full-stack corporate financial dashboard for **Circuit Labs, Inc.** built with Next.js, React, TypeScript, and Tailwind CSS. It aggregates corporate transactions from three separate banks (**Chase**, **Bank of America**, and **American Express**), converts all transactions dynamically into a unified currency, and enforces role-based access control (RBAC).
+This is a complete, full-stack corporate financial dashboard built for **Circuit Labs, Inc.** using Next.js 16 (App Router), React 19, TypeScript, and Tailwind CSS.
+
+It aggregates corporate transactions from three different banks (**Chase**, **Bank of America**, and **American Express**), unifies their data structures, converts currencies dynamically, and enforces Role-Based Access Control (RBAC).
 
 ---
 
 ## 🚀 Getting Started
 
 ### 1. Installation
-Navigate to the project directory and install the dependencies:
+Navigate to the `project` directory and install the dependencies:
 ```bash
 cd project
 npm install
@@ -17,86 +19,69 @@ npm install
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
-
-### 3. Production Build
-Verify TypeScript and Next.js static optimizations compile successfully:
-```bash
-npm run build
-npm run start
-```
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the dashboard.
 
 ---
 
-## 🔐 Mock Credentials & Access Matrix
+## 🔐 Authentication & Access Matrix (Mock)
 
-You can sign in with any of the following accounts from `data/users/user.json`:
+You can sign in with any of the mock accounts defined in `data/users/user.json` (passwords are stored as plain text for the sake of this test):
 
-| Name | Email | Password | Role | Allowed Tabs |
-| --- | --- | --- | --- | --- |
-| **Alex Rivera** | `alex.rivera@circuitlabs.io` | `CircuitAdmin2025!` | `admin` | Transactions, Stats, Security Log |
-| **Priya Shah** | `priya.shah@circuitlabs.io` | `CircuitFinance2025!` | `finance_lead` | Transactions, Stats, Security Log |
-| **Marcus Chen** | `marcus.chen@circuitlabs.io` | `CircuitAnalyst2025!` | `analyst` | Stats |
-| **Jordan Lee** | `jordan.lee@circuitlabs.io` | `CircuitViewer2025!` | `viewer` | Transactions |
+| Name | Role | Allowed Tabs |
+| --- | --- | --- |
+| **Alex Rivera** | `admin` | Transactions, Stats, Security |
+| **Priya Shah** | `finance_lead` | Transactions, Stats, Security |
+| **Marcus Chen** | `analyst` | Stats |
+| **Jordan Lee** | `viewer` | Transactions |
 
 ---
 
-## 🏗️ Architecture & Implementation Details
+## 🏗️ Architecture & Implementation
 
-### 1. Data Normalization (`src/lib/normalize.ts`)
-Each bank has a distinct ledger format. The normalization library standardizes these structures into a unified `NormalizedTransaction` shape:
-- **Chase**: Amounts are signed (negative values represent spending/debits, positive represent credit payouts).
-- **BoA**: All amounts are positive, accompanied by a `debitCreditMemo`. Transactions are normalized as `debitCreditMemo === 'DEBIT' ? -amount : amount`.
-- **Amex**: Amounts are positive cents for charges and negative cents for payments. Standardized as `-amountInCents / 100`.
-- **Authorized By Matching**: Transaction operators are looked up dynamically from `data/users/user.json` by matching the employee name (`initiatedBy.name` for Chase, `originator.name` for BoA, and `employee.name` for Amex).
+### 1. Data Normalization
+The core challenge of this project was taking three entirely different JSON structures and unifying them into a single, predictable `NormalizedTransaction` type. 
+- **Chase**: Handled signed amounts (debits as negative, credits as positive).
+- **BoA**: Uses an absolute amount with a `debitCreditMemo` ("DEBIT" or "CREDIT").
+- **Amex**: Uses cents (`amountInCents`) requiring division by 100.
+- All operators (e.g., `initiatedBy`, `originator`, `employee`) are dynamically matched against `data/users/user.json` to extract the full `User` object for tooltips.
 
-### 2. Currency Conversion (`src/lib/currency.ts`)
-Static conversion rates from `data/rates.json` are utilized (USD is the base currency: $1.00$):
-- **Formula (to USD)**: `amountInUSD = amount * rate[original_currency]` (e.g., $1\text{ EUR} = 1.08\text{ USD}$, $1\text{ GBP} = 1.27\text{ USD}$, $1\text{ CAD} = 0.74\text{ USD}$).
-- **Formula (from USD to Target)**: `amountInTarget = amountInUSD / rate[target_currency]`.
-- All dashboard statistics (KPI cards, top spenders, monthly inflow/outflow, and balance lines) are calculated in USD base values.
+### 2. Currency Conversion
+Static conversion rates from `data/rates.json` are utilized. 
+- USD is treated as the base currency.
+- All aggregate math in the "Stats" tab (total cash in, total outflow, top spenders) is calculated by first converting every original transaction amount to USD.
 
-### 3. Role-Based Access Control (`src/lib/rbac.ts` & Layout Guards)
-Reusable RBAC helpers live in `src/lib/rbac.ts` (`canAccessTab`, `getDefaultTab`, `filterAllowedTabs`) and are consumed by `src/app/dashboard/layout.tsx` on client-side route mounts:
-- If a session is missing from `localStorage`, users are redirected to `/login`.
-- If an authenticated user attempts to access a tab not listed in their role access permissions (`allowedTabs`), the guard redirects them back to their highest-priority allowed tab.
-- The sidebar navigation only renders tabs the current user is allowed to see.
+### 3. Role-Based Access Control (RBAC)
+- State is preserved in `localStorage` containing the user's `role` and `allowedTabs` (passwords are stripped by the API).
+- Route guards in `src/app/dashboard/layout.tsx` check the user's allowed tabs against the current URL path.
+- Unauthorized attempts to access a tab redirect the user to their highest-priority allowed tab.
 
-### 4. Interactive Custom SVG Charts (`src/components/Charts/`)
-To bypass dependency conflicts between React 19, Next.js 16, and third-party libraries (e.g., Recharts), two interactive chart components were developed from scratch using pure React SVG tags:
-- **BalanceOverTimeChart**: Computes starting balances backwards from the current bank ledger values (Chase: `$284,750.42`, BoA: `$6,324,448.17`, Amex: `$24,842.17`) and plots monthly asset totals.
-- **InflowOutflowChart**: Renders side-by-side monthly columns showing credit sums (+) vs debit magnitudes (-).
-- Features include precise grid ticks, smooth lines, hover crosshairs, and dynamic interactive floating tooltips.
-
-### 5. Custom Tab: Security Log (`src/app/dashboard/custom/page.tsx`)
-A custom security dashboard page restricted to `admin` and `finance_lead` roles:
-- Lists all system users, credentials status, and access rights.
-- Displays a mock real-time audit log tracking login initiations, CSV downloads, and unauthorized routing requests.
+### 4. Custom Bonus Tab: Security Log
+A custom third tab was built called "Security". It is restricted strictly to `admin` and `finance_lead` roles. It utilizes the existing user data to render a mock "Audit Log" of system access and permissions.
 
 ---
 
 ## ⚖️ Tradeoffs & Limitations
 
-- **No real authentication layer**: Session management relies on `localStorage` only, as specified. In production, this would use server-side sessions or JWT tokens with `httpOnly` cookies.
-- **Static exchange rates**: All currency conversions use the fixed rates from `data/rates.json`. No live API is called, as specified in the exercise instructions.
-- **Custom SVG charts instead of Recharts**: To avoid compatibility warnings with React 19 Server Components and minimize bundle size, all charts (Balance Over Time, Inflow vs Outflow) are rendered as pure React SVG elements. This trades charting library features (zooming, tooltips out-of-box) for full control and zero third-party runtime cost.
-- **CSV export is client-side**: The CSV download is generated in the browser from the currently fetched data. A production app would stream this from the server to handle large datasets.
-- **Balance Over Time chart**: Starting balances are reverse-calculated from the final balances published by each bank. This is an approximation since we only have the statement-period transactions.
+- **Mock Authentication:** To keep the exercise simple and within requirements, sessions are stored in `localStorage` rather than HTTP-only cookies or JWTs.
+- **Client-Side SWR Fetching:** SWR is heavily utilized for client-side filtering and sorting instead of Next.js Server Actions. This allows the Transactions table to filter instantly without full page reloads.
+- **Static Exchange Rates:** As requested, currency conversions use static JSON rather than calling a live financial API.
 
 ---
 
 ## ✅ What Was Skipped
 
-Nothing was skipped — all required features have been implemented:
-- Login & RBAC, all bank API routes, normalized transactions endpoint with filters
-- Transactions tab with table, filters, currency switching, tooltip, detail modal, CSV export
-- Stats tab with 2 KPI cards, all 4 chart options, and vendor breakdown table
-- Custom bonus tab (Security Log) with access control
+**Nothing was skipped.** All required features have been fully implemented, including the bonus custom tab:
+- Login & RBAC.
+- All bank API routes and normalized transactions endpoint.
+- Transactions tab (table, filters, currency toggles, tooltips, detail modal, CSV export).
+- Stats tab (2 KPI cards, Bank Balance line chart, Inflow/Outflow bar chart, Vendor Table).
 
 ---
 
 ## 🤖 AI Assistance & Tooling
 
-The application was built with the assistance of **Antigravity**, an agentic AI coding assistant designed by Google DeepMind.
-- **Use Cases**: Normalization code mapping, layout skeleton setup, interactive SVG drawing arithmetic, and CSS optimization.
-- **Trade-offs**: Chose custom SVG nodes over Recharts to avoid compilation warnings with React 19's Server Components and to keep bundle size minimal.
+To build this project efficiently, I adopted an AI-orchestration approach, acting as the prompt engineer to guide multiple LLMs to produce production-ready code:
+
+1. **Initial Generation (Gemini Flash 3.5):** I detailed the exact case study requirements, data structures, and Figma layouts in a comprehensive prompt. Gemini Flash was used to rapidly bootstrap the initial architecture, API routes, and Tailwind components.
+2. **Review & Verification (Claude Opus 4.6):** Claude was utilized to review the generated logic—specifically verifying the mathematical correctness of the data normalization (handling Chase negatives, BoA memos, and Amex cents) and the currency conversion math.
+3. **Refining & Polishing (Gemini 3.1 Pro):** Finally, I used Gemini 3.1 Pro directly in my IDE to run a complete project audit, enforce strict TypeScript union types (`UserRole`, `CurrencyCode`), extract reusable components (like `StatKPICard`), and replace native browser alerts with custom polished UI modals.
