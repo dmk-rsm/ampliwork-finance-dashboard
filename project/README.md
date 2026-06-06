@@ -6,7 +6,7 @@ It aggregates corporate transactions from three different banks (**Chase**, **Ba
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Installation
 Navigate to the `project` directory and install the dependencies:
@@ -23,7 +23,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 
 ---
 
-## 🔐 Authentication & Access Matrix (Mock)
+## Authentication & Access Matrix (Mock)
 
 You can sign in with any of the mock accounts defined in `data/users/user.json` (passwords are stored as plain text for the sake of this test):
 
@@ -36,7 +36,7 @@ You can sign in with any of the mock accounts defined in `data/users/user.json` 
 
 ---
 
-## 🧪 Testing the API Endpoints
+## Testing the API Endpoints
 
 Because all API routes are protected by backend Bearer Token authentication, you cannot simply `GET` the endpoints anonymously via Postman or your browser.
 
@@ -51,7 +51,7 @@ curl -H "Authorization: Bearer usr_001" http://localhost:3000/api/transactions
 
 ---
 
-## 🏗️ Architecture & Implementation
+## Architecture & Implementation
 
 ### 1. Data Normalization
 The core challenge of this project was taking three entirely different JSON structures and unifying them into a single, predictable `NormalizedTransaction` type. 
@@ -75,7 +75,7 @@ A custom third tab was built called "Security". It is restricted strictly to `ad
 
 ---
 
-## ⚖️ Tradeoffs & Limitations
+## Tradeoffs & Limitations
 
 - **Mock Authentication:** While sessions are stored in `localStorage` rather than HTTP-only cookies (as per case study instructions), the application enforces **full backend API protection**. The custom SWR fetcher automatically injects the user's ID as a `Bearer` token in the `Authorization` header, and all API routes strictly validate this token against the internal directory before returning data.
 - **Client-Side SWR Fetching:** SWR is heavily utilized for client-side filtering and sorting instead of Next.js Server Actions. This allows the Transactions table to filter instantly without full page reloads.
@@ -83,7 +83,7 @@ A custom third tab was built called "Security". It is restricted strictly to `ad
 
 ---
 
-## ✅ What Was Skipped
+## What Was Skipped
 
 **Nothing was skipped.** All required features have been fully implemented, including the bonus custom tab:
 - Login & RBAC.
@@ -93,7 +93,7 @@ A custom third tab was built called "Security". It is restricted strictly to `ad
 
 ---
 
-## 🤖 AI Assistance & Tooling
+## AI Assistance & Tooling
 
 To build this project efficiently, I adopted an AI-orchestration approach, acting as the prompt engineer to guide multiple LLMs to produce production-ready code:
 
