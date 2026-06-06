@@ -40,3 +40,31 @@ export function clearUser(): void {
     console.error('Failed to clear user session', err);
   }
 }
+
+/**
+ * A custom fetcher for SWR that automatically attaches the user's ID
+ * as a Bearer token in the Authorization header to secure API routes.
+ */
+export const authFetcher = async (url: string) => {
+  const user = getUser();
+  const headers: HeadersInit = {};
+  
+  if (user) {
+    headers['Authorization'] = `Bearer ${user.id}`;
+  }
+
+  const res = await fetch(url, { headers });
+  
+  if (!res.ok) {
+    if (res.status === 401) {
+      // Token is invalid or missing, clear session and redirect to login
+      clearUser();
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+    }
+    throw new Error('API request failed');
+  }
+  
+  return res.json();
+};

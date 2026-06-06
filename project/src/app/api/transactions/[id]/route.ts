@@ -7,11 +7,16 @@ import {
   normalizeBoaTransaction,
   normalizeAmexTransaction,
 } from '../../../../lib/normalize';
+import { checkApiAuth } from '../../../../lib/api-auth';
 
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> | { id: string } }
 ) {
+  if (!checkApiAuth(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const params = await context.params;
     const { id } = params;

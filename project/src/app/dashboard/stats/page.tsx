@@ -7,8 +7,7 @@ import BalanceOverTimeChart from '../../../components/Charts/BalanceOverTimeChar
 import StatKPICard from '../../../components/StatKPICard';
 import { NormalizedTransaction } from '../../../types';
 import { convertCurrencyClient, formatCurrencyClient } from '../../../lib/currency_client';
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { authFetcher } from '../../../lib/auth';
 
 // Final balances as of 2025-05-31
 const CHASE_FINAL_BALANCE = 284750.42;
@@ -71,12 +70,12 @@ const formatMillionsKPI = (amount: number) => {
 export default function StatsTab() {
   const { data: transactions, error: transactionsError } = useSWR<NormalizedTransaction[]>(
     '/api/transactions',
-    fetcher
+    authFetcher
   );
 
   const { data: ratesData, error: ratesError } = useSWR(
     '/api/rates',
-    fetcher
+    authFetcher
   );
 
   const rates = ratesData?.rates;

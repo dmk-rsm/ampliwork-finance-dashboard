@@ -9,8 +9,13 @@ import {
 } from '../../../lib/normalize';
 import { NormalizedTransaction } from '../../../types';
 import { convertCurrency } from '../../../lib/currency';
+import { checkApiAuth } from '../../../lib/api-auth';
 
 export async function GET(request: NextRequest) {
+  if (!checkApiAuth(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const bankFilter = searchParams.get('bank'); // chase, boa, amex, or all

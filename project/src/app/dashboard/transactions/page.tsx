@@ -6,8 +6,7 @@ import TransactionsTable from '../../../components/TransactionsTable';
 import TransactionModal from '../../../components/TransactionModal';
 import { NormalizedTransaction, User } from '../../../types';
 import { convertCurrencyClient } from '../../../lib/currency_client';
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { authFetcher } from '../../../lib/auth';
 
 export default function TransactionsTab() {
   const [bankFilter, setBankFilter] = useState('all');
@@ -22,8 +21,8 @@ export default function TransactionsTab() {
   const [activeTab, setActiveTab] = useState<'all' | 'starred'>('all');
 
   // Fetch exchange rates and user directory dynamically via Next.js API Routes (no JSON imports)
-  const { data: ratesData } = useSWR('/api/rates', fetcher);
-  const { data: usersData } = useSWR('/api/users', fetcher);
+  const { data: ratesData } = useSWR('/api/rates', authFetcher);
+  const { data: usersData } = useSWR('/api/users', authFetcher);
 
   const rates = ratesData?.rates;
   const usersList = usersData?.users || [];
@@ -70,7 +69,7 @@ export default function TransactionsTab() {
 
   const { data: transactions, error, isValidating } = useSWR<NormalizedTransaction[]>(
     `/api/transactions?${queryParams.toString()}`,
-    fetcher
+    authFetcher
   );
 
   const loading = !transactions && !error;

@@ -6,8 +6,7 @@ import useSWR from 'swr';
 import { getUser } from '../../../lib/auth';
 import { canAccessTab, getDefaultTab } from '../../../lib/rbac';
 import { LoggedInUser, User } from '../../../types';
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { authFetcher } from '../../../lib/auth';
 
 interface AuditEvent {
   timestamp: string;
@@ -23,7 +22,7 @@ export default function SecurityTab() {
   const [currentUser, setCurrentUser] = useState<LoggedInUser | null>(null);
 
   // Fetch users directory dynamically from Next.js API Routes (no JSON imports)
-  const { data: usersData, error: usersError } = useSWR('/api/users', fetcher);
+  const { data: usersData, error: usersError } = useSWR('/api/users', authFetcher);
   const users = usersData?.users || [];
 
   useEffect(() => {

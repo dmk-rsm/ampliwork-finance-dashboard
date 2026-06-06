@@ -62,7 +62,7 @@ A custom third tab was built called "Security". It is restricted strictly to `ad
 
 ## ⚖️ Tradeoffs & Limitations
 
-- **Mock Authentication:** To keep the exercise simple and within requirements, sessions are stored in `localStorage` rather than HTTP-only cookies or JWTs.
+- **Mock Authentication:** While sessions are stored in `localStorage` rather than HTTP-only cookies (as per case study instructions), the application enforces **full backend API protection**. The custom SWR fetcher automatically injects the user's ID as a `Bearer` token in the `Authorization` header, and all API routes strictly validate this token against the internal directory before returning data.
 - **Client-Side SWR Fetching:** SWR is heavily utilized for client-side filtering and sorting instead of Next.js Server Actions. This allows the Transactions table to filter instantly without full page reloads.
 - **Static Exchange Rates:** As requested, currency conversions use static JSON rather than calling a live financial API.
 
