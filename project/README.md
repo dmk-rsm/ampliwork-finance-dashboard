@@ -97,6 +97,7 @@ A custom third tab was built called "Security". It is restricted strictly to `ad
 
 To build this project efficiently, I adopted an AI-orchestration approach, acting as the prompt engineer to guide multiple LLMs to produce production-ready code:
 
-1. **Initial Generation (Gemini Flash 3.5):** I detailed the exact case study requirements, data structures, and Figma layouts in a comprehensive prompt. Gemini Flash was used to rapidly bootstrap the initial architecture, API routes, and Tailwind components.
-2. **Review & Verification (Claude Opus 4.6):** Claude was utilized to review the generated logic—specifically verifying the mathematical correctness of the data normalization (handling Chase negatives, BoA memos, and Amex cents) and the currency conversion math.
-3. **Refining & Polishing (Gemini 3.1 Pro):** Finally, I used Gemini 3.1 Pro directly in my IDE to run a complete project audit, enforce strict TypeScript union types (`UserRole`, `CurrencyCode`), extract reusable components (like `StatKPICard`), and replace native browser alerts with custom polished UI modals.
+1. **Problem définitions and scope :** Defining the goal, determine the AI approach using google gemini
+2. **Initial Generation (Gemini Flash 3.5):** I detailed the exact case study requirements, data structures, and Figma layouts in a comprehensive prompt. Gemini Flash was used to rapidly bootstrap the initial architecture, API routes, and Tailwind components.
+3. **Review & Verification (Claude Opus 4.6):** Claude was utilized to review the generated logic—specifically verifying the mathematical correctness of the data normalization (handling Chase negatives, BoA memos, and Amex cents) and the currency conversion math.
+4. **Refining & Polishing (Gemini 3.1 Pro):** Finally, I used Gemini 3.1 Pro directly in my IDE to run a complete project audit, enforce strict TypeScript union types (`UserRole`, `CurrencyCode`), extract reusable components (like `StatKPICard`), and replace native browser alerts with custom polished UI modals.
